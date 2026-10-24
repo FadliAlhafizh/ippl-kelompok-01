@@ -7,7 +7,10 @@ import inertia from '@inertiajs/vite';
 export default defineConfig({
     plugins: [
         laravel({
-            input: ['resources/js/app.jsx'],
+            input: [
+                'resources/css/app.css', //Tambahan Lutfi
+                'resources/js/app.jsx',
+            ],
             refresh: true,
         }),
         tailwindcss(),
