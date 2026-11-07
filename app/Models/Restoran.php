@@ -2,15 +2,27 @@
 
 namespace App\Models;
 
+use illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Restoran extends Model
 {
-    protected $table = 'restorans';
-    protected $guarded = ['id'];
+    use HasFactory;
+
+    protected $table = 'restoran';
+    protected $primaryKey = 'restoranid';
+    public $incrementing = true;
+    protected $keyType = 'int';
+
+    protected $fillable = [
+        'nama',
+        'alamat',
+        'kategori',
+        'rating',
+    ];
 
     public function menu()
     {
-        return $this->hasMany(Menu::class, 'restoran_id');
+        return $this->hasMany(Menu::class, 'restoranid', 'restoranid');
     }
 }

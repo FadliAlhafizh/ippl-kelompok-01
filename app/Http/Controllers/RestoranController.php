@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Models\Restoran;
+use Inertia\Inertia;
 
 class RestoranController extends Controller
 {
@@ -14,4 +15,24 @@ class RestoranController extends Controller
             'restorans' => $restorans
         ]);
     }
+
+    public function tampilkanDetail($id) 
+    {
+        $restoran = Restoran::findOrFail($id);
+
+        return Inertia::render('Restoran/Detail', [
+            'restoran' => $restoran
+        ]);
+    }
+
+    public function tampilkanDaftarSekitar()
+    {
+        $restoranSekitar = Restoran::all();
+
+        return Inertia::render('Restoran/Index', [
+            'restoranSekitar' => $restoranSekitar
+        ]);
+    }
+    
 }
+
