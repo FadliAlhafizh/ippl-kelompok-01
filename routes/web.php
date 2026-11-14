@@ -1,8 +1,12 @@
-
 <?php
 
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use App\Http\Controllers\RestoranController;
+
+Route::get('/restorans', [RestoranController::class, 'index'])->name('restorans.index');
+Route::get('/restoran/{id}', [RestoranController::class, 'tampilkanDetail'])->name('restoran.detail');
+Route::get('/restoran-sekitar', [RestoranController::class, 'tampilkanDaftarSekitar'])->name('restoran.sekitar');
 
 Route::get('/', function () {
     return Inertia::render('Dashboard');
@@ -22,10 +26,6 @@ Route::get('/signin', function () {
 Route::get('/signup', function () {
     return Inertia::render('SignUp');
 })->name('signup');
-
-Route::get('/profile', function () {
-    return Inertia::render('Profile');
-})->name('profile');
 
 Route::get('/profile', function () {
     return Inertia::render('Profile');
