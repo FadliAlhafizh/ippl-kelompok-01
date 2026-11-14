@@ -1,5 +1,6 @@
 
 import React, { useMemo, useState } from "react";
+import RestoranSekitar from "../components/RestoranSekitar";
 
 const restaurants = [
     {
@@ -408,6 +409,8 @@ export default function Dashboard() {
                         </div>
                     </div>
                 </section>
+
+                <RestoranSekitar />
 
                 {/* SEARCH & RESTAURANTS */}
                 <section id="restoran" className="bg-gray-50/80 py-16 sm:py-20">
