@@ -17,6 +17,9 @@ return new class extends Migration
             $table->text('alamat');
             $table->string('kategori');
             $table->double('rating')->default(0.0);
+            $table->decimal('latitude', 10, 8)->nullable(); 
+            $table->decimal('longitude', 11, 8)->nullable();
+            $table->string('city')->nullable();
             $table->json('daftar_menu')->nullable();
             $table->timestamps();
         });
