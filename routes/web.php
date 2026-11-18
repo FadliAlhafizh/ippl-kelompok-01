@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\RestoranController;
 use App\Http\Controllers\RekomendasiController;
@@ -8,10 +9,30 @@ Route::get('/restorans', [RestoranController::class, 'index'])->name('restorans.
 Route::get('/restoran/{id}', [RestoranController::class, 'tampilkanDetail'])->name('restoran.detail');
 Route::get('/restoran-sekitar', [RestoranController::class, 'tampilkanDaftarSekitar'])->name('restoran.sekitar');
 
-Route::get('/rekomendasis', [RekomendasiController::class, 'index'])->name('rekomendasis.index');
-
 Route::get('/', function () {
+    return Inertia::render('Dashboard');
+})->name('dashboard');
+
+// Halaman welcome lama tetap bisa diakses
+Route::get('/welcome', function () {
     return Inertia::render('welcome', [
-        'title' => 'Welcome to Inertia.js with React'
+        'title' => 'Welcome to Inertia.js with React',
     ]);
+})->name('welcome');
+
+Route::get('/signin', function () {
+    return Inertia::render('SignIn');
+})->name('signin');
+
+Route::get('/signup', function () {
+    return Inertia::render('SignUp');
+})->name('signup');
+
+Route::get('/profile', function () {
+    return Inertia::render('Profile');
+})->name('profile');
+
+Route::get('/restaurant-detail', function () {    //Sementara untuk testing, nanti dihapus
+    return Inertia::render('DetailRestaurant');
+
 });
