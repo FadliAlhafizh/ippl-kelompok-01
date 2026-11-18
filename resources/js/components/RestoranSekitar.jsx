@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 
-// Batas akurasi lokasi (meter). Di atas ini dianggap "tidak akurat".
 const BATAS_AKURASI = 1000;
 
 export default function RestoranSekitar() {
@@ -11,7 +10,6 @@ export default function RestoranSekitar() {
     const [loading, setLoading] = useState(false);
     const [lokasiManual, setLokasiManual] = useState("");
 
-    // Mengambil daftar restoran dari backend (RestoranController@tampilkanDaftarSekitar)
     const ambilRestoran = async (params) => {
         setLoading(true);
         try {
@@ -35,7 +33,6 @@ export default function RestoranSekitar() {
         setStatus("manual");
     };
 
-    // Skenario utama (langkah 2-4): minta izin lokasi, deteksi koordinat, tampilkan restoran
     const deteksiLokasi = () => {
         setStatus("mencari");
         setPesan("");
@@ -57,19 +54,15 @@ export default function RestoranSekitar() {
                     longitude: posisi.coords.longitude,
                 });
             },
-            // izin ditolak / gagal -> skenario eksepsional
             () => gunakanManual("Lokasi tidak akurat, gunakan lokasi manual"),
             { enableHighAccuracy: true, timeout: 10000 }
         );
     };
 
-    // Saat dashboard dibuka, langsung minta lokasi
     useEffect(() => {
         deteksiLokasi();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    // Skenario eksepsional (langkah 2-3): pengguna memasukkan lokasi manual
     const cariManual = (event) => {
         event.preventDefault();
         if (!lokasiManual.trim()) return;
