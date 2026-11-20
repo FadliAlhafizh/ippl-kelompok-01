@@ -70,12 +70,22 @@ class RestoranController extends Controller
 
         $daftar = $query->get()->map(fn ($r) => $r->toCard($lat, $lng, $favoritIds));
 
+
+        // filter jarak_max hanya jika lokasi GPS tersedia
         if ($request->filled('jarak_max') && $lat !== null) {
             $max = (float) $request->jarak_max;
             $daftar = $daftar->filter(fn ($r) => $r['jarak'] !== null && $r['jarak'] <= $max);
         }
 
-        $daftar = match ($request->input('sort', $lat !== null ? 'jarak' : 'terbaru')) {
+        // Jika user belum mengizinkan lokasi ($lat === null), default urutannya 'terbaru'
+        $sortDipilih = $request->input('sort');
+        if (! $sortDipilih) {
+            $sortDipilih = ($lat !== null && $lng !== null) ? 'jarak' : 'terbaru';
+        } elseif ($sortDipilih === 'jarak' && ($lat === null || $lng === null)) {
+            $sortDipilih = 'terbaru';
+        }
+
+        $daftar = match ($sortDipilih) {
             'rating' => $daftar->sortByDesc('rating'),
             'harga_asc' => $daftar->sortBy(fn ($r) => $r['harga_rata'] ?? PHP_INT_MAX),
             'harga_desc' => $daftar->sortByDesc(fn ($r) => $r['harga_rata'] ?? 0),
