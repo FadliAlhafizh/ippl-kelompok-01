@@ -2,75 +2,66 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
+use Inertia\Inertia;
 
+/** UC1 — Membuat Akun dan Login (FR-01) */
 class AuthController extends Controller
 {
-    // Register a new user
-    public function register(Request $request) {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'no_telepon' => 'required|string|max:15|unique:users',
-            'password' => 'required|string|min:8|confirmed',
-        ]);
-
-        user::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'no_telepon' => $request->no_telepon,
-            'password' => Hash::make($request->password),
-        ]);
-
-        $token = $user->createToken('auth_token')->plainTextToken;
-
-        return response()->json([
-            'message' => 'Registrasi berhasil',
-            'access_token' => $token,
-            'token_type' => 'Bearer',
-            'user' => $user,
-        ], 201);
+    public function showSignin()
+    {
+        return Inertia::render('SignIn');
     }
 
-    // Login user
-    public function login(Request $request) {
-        $request->validate([
-            'email' => 'required|string|email',
+    public function signin(Request $request)
+    {
+        $kredensial = $request->validate([
+            'email' => 'required|email',
             'password' => 'required|string',
         ]);
 
-        $user = User::where('email', $request->email)->first();
-
-        if (! $user || ! Hash::check($request->password, $user->password)) {
-            throw ValidationException::withMessages([
-                'email' => ['The provided credentials are incorrect.'],
-            ]);
+        if (! Auth::attempt($kredensial, $request->boolean('remember'))) {
+            throw ValidationException::withMessages(['email' => 'Email atau password salah']);
         }
 
-        $token = $user->createToken('auth_token')->plainTextToken;
+        $request->session()->regenerate();
 
-        return response()->json([
-            'message' => 'Login berhasil',
-            'access_token' => $token,
-            'token_type' => 'Bearer',
-            'user' => $user,
-        ]);
+        return Auth::user()->isAdmin()
+            ? redirect()->route('admin.restoran.index')
+            : redirect()->intended(route('home'));
     }
 
-    // Logout user
-    public function logout(Request $request) {
-        $request->user()->currentAccessToken()->delete();
-
-        return response()->json([
-            'message' => 'Logout berhasil',
-        ]);
+    public function showSignup()
+    {
+        return Inertia::render('SignUp');
     }
-    
-    public function UserProfile(Request $request) {
-        return response()->json($request->user());
+
+    public function signup(Request $request)
+    {
+        $data = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'password' => 'required|string|min:8',
+        ]);
+
+        if (User::where('email', $data['email'])->exists()) {
+            throw ValidationException::withMessages(['email' => 'Email sudah terdaftar, silahkan login']);
+        }
+
+        User::create($data); // password di-hash otomatis lewat cast 'hashed'
+
+        return redirect()->route('signin')->with('success', 'Pendaftaran Berhasil, silakan login.');
+    }
+
+    public function logout(Request $request)
+    {
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect()->route('signin');
     }
 }
