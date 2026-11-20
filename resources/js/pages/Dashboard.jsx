@@ -5,7 +5,7 @@ import RestoranSekitar from "../components/RestoranSekitar";
 const restaurants = [
     {
         id: 1,
-        name: "Warung Nasi Padang Sederhana",
+        name: "Warung Nasi Padang",
         category: "Nusantara",
         rating: 4.8,
         reviews: 128,
